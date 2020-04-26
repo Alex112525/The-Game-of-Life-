@@ -4,7 +4,7 @@ import time
 
 pygame.init()
 
-width, height = 500, 500
+width, height = 700, 700
 screen = pygame.display.set_mode((height, width))
 
 bg_color = 25, 25, 25  # Background color
@@ -17,35 +17,17 @@ size_CH = height / Y_cells
 
 game_state = np.zeros((X_cells, Y_cells))  # Matrix of zeros Alive = 1, Death = 0
 
-# Stick Automate
-# game_state[5, 3] = 1
-# game_state[5, 4] = 1
-# game_state[5, 5] = 1
-# game_state[5, 6] = 1
-# game_state[5, 7] = 1
-# game_state[5, 8] = 1
-# game_state[5, 9] = 1
-# game_state[5, 10] = 1
-# game_state[5, 11] = 1
-# game_state[5, 12] = 1
+game_state[30, 28] = 1
 game_state[30, 29] = 1
-game_state[30, 30] = 1
-game_state[31, 30] = 1
+game_state[31, 29] = 1
 
-game_state[28, 31] = 1
+game_state[28, 30] = 1
+game_state[29, 30] = 1
 game_state[29, 31] = 1
-game_state[29, 32] = 1
 
 Pause = True
 count = 0
-
 while True:
-
-    # Take Photo
-    if not Pause:
-        pygame.image.save(screen, "screenshot" + str(count) + ".jpg")
-        count += 1
-
     # Matrix for save the changes
     newGame_state = np.copy(game_state)
 
@@ -78,13 +60,18 @@ while True:
                           game_state[x % X_cells, (y + 1) % Y_cells] + \
                           game_state[(x + 1) % X_cells, (y + 1) % Y_cells]
 
-                # Rule 1: A cell dead with exactly 3 neighbors alive, "Alive"
-                if game_state[x, y] == 0 and n_neigh == 3:
-                    newGame_state[x, y] = 1
+                # Rule 1
+                #if game_state[x, y] == 0 and n_neigh == 2:
+                #    newGame_state[x, y] = 1
 
-                # Rule 2: A cell Alive with less of two o more than 3 neighbors, "Dead
-                elif game_state[x, y] == 1 and (n_neigh < 2 or n_neigh > 3):
+                # Rule 2
+                if game_state[x, y] == 1 and (n_neigh < 1 or n_neigh > 2):
                     newGame_state[x, y] = 0
+
+                if n_neigh > 3:
+                    newGame_state[x, y] = 0
+                elif n_neigh == 2:
+                    newGame_state[x, y] = 1
 
             # coordinates for each square
             poly = [(x * size_CW, y * size_CH),
@@ -100,3 +87,6 @@ while True:
 
     game_state = np.copy(newGame_state)
     pygame.display.flip()
+    if not Pause:
+        pygame.image.save(screen, "screenshot" + str(count) + ".jpg")
+        count += 1
